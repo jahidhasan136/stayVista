@@ -33,7 +33,6 @@ const SignUp = () => {
     }
   }
   const handleGoogleSignIn = async (e) => {
-    setLoading(true)
     try {
       await signInWithGoogle()
       navigate('/')
