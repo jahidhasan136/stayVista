@@ -6,8 +6,8 @@ import { DateRange } from 'react-date-range';
 const RoomReservation = ({ room }) => {
   const [state, setState] = useState([
     {
-      startDate: new Date(),
-      endDate: null,
+      startDate: new Date(room.from),
+      endDate: new Date(room.to),
       key: 'selection'
     }
   ]);
@@ -21,8 +21,8 @@ const RoomReservation = ({ room }) => {
       <div className='flex justify-center'>
         {/* calender */}
         <DateRange
-        showDateDisplay={false}
-        rangeColors={['#F6536D']}
+          showDateDisplay={false}
+          rangeColors={['#F6536D']}
           editableDateInputs={true}
           onChange={item => setState([item.selection])}
           moveRangeOnFirstSelection={false}
