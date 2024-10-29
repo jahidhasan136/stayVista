@@ -1,9 +1,13 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import AddRoomForm from '../../../components/Form/AddRoomForm';
 import useAuth from '../../../hooks/useAuth';
 import { imageUpload } from '../../../api/utils';
+import { Helmet } from 'react-helmet-async'
+import { useMutation } from '@tanstack/react-query'
+import useAxiosSecure from '../../../hooks/useAxiosSecure';
 
 const AddRoom = () => {
+    const axiosSecure = useAxiosSecure()
     const { user } = useAuth();
     const [imagePreview, setImagePreview] = useState();
     const [imageText, setImageText] = useState('Upload Image')
@@ -19,6 +23,16 @@ const AddRoom = () => {
     const handleDates = (range) => {
         setDates(range.selection)
     }
+
+    const { mutateAsync } = useMutation({
+        mutationFn: async (roomData) => {
+            const { data } = await axiosSecure.post('/room', roomData)
+            return data;
+        },
+        onSuccess: () => {
+            console.log('Data Saved Succesfully')
+        }
+    })
 
     // Form handler
     const handleSubmit = async (e) => {
@@ -56,21 +70,27 @@ const AddRoom = () => {
                 image: image_url
             }
             console.table(roomData)
+
+            // post request to server
+            await mutateAsync(roomData)
         } catch (err) {
             console.log(err)
         }
     }
 
     // handle image change
-    const handleImage = (image) =>{
+    const handleImage = (image) => {
         setImagePreview(URL.createObjectURL(image))
         setImageText(image.name)
     }
     return (
-        <div>
+        <>
+            <Helmet>
+                <title>Add Room | Dashboard</title>
+            </Helmet>
             {/* Form */}
-            <AddRoomForm dates={dates} handleDates={handleDates} handleSubmit={handleSubmit} setImagePreview={setImagePreview} imagePreview={imagePreview} handleImage={handleImage} imageText={imageText}/>
-        </div>
+            <AddRoomForm dates={dates} handleDates={handleDates} handleSubmit={handleSubmit} setImagePreview={setImagePreview} imagePreview={imagePreview} handleImage={handleImage} imageText={imageText} />
+        </>
     );
 };
 
